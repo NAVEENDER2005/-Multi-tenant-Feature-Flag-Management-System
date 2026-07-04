@@ -203,6 +203,32 @@ Every response follows: `{ success: boolean, data?: any, error?: string }`
 
 ---
 
+## Implemented Core Features & Enhancements
+
+In addition to the baseline monorepo architecture, the following production-grade features have been successfully implemented:
+
+1. **Audit Logs (Flag Activity History)**:
+   * A persistent `audit_logs` database table records all key flag actions: `created`, `enabled`, `disabled`, and `deleted`.
+   * Org admins have access to an **Audit Logs** history table on their dashboard scoped strictly to their organization's activities.
+   * Super admins have access to a **Global Audit Logs** panel showing activities across all organizations, with support for real-time organization-based filtering.
+   * Available at: `GET /api/audit-logs`.
+
+2. **Gradual Rollout Percentage**:
+   * Enables gradual feature release targeting (from 0% to 100%).
+   * Uses a deterministic non-cryptographic hashing algorithm (`hashUserId(userId + flagKey) % 100`) server-side to guarantee a stable rollout group assignment per end-user.
+   * Org admins can adjust the rollout percentage using a slider when creating flags, or edit the percentage inline in the flags table on the Admin Dashboard.
+
+3. **Flag Search & Filtering**:
+   * Org admins can filter flags in real-time by flag key or description from their dashboard search input.
+
+4. **Forgot & Reset Password Flow**:
+   * Implemented custom password recovery and reset endpoints at `POST /api/auth/forgot-password` and `POST /api/auth/reset-password` (with token expiration and minimum complexity checks).
+
+5. **SaaS Light Theme**:
+   * Replaced the default dark theme with a clean, high-fidelity light theme layout (pure white surfaces, slate texts, soft light-gray backgrounds, and vibrant blue brand accents) modeled after premium SaaS templates.
+
+---
+
 ## What I'd Add for Production-Readiness
 
 These are intentionally out of scope but are the obvious next steps:
@@ -212,7 +238,6 @@ These are intentionally out of scope but are the obvious next steps:
 | **Rate limiting** (`express-rate-limit`) | Not needed at zero traffic |
 | **Refresh tokens** | Adds complexity without benefit at this scope |
 | **Email verification** | Requires email infra (SMTP/SES) |
-| **Audit logs** | Valuable for compliance; separate table needed |
 | **Pagination** | No dataset large enough to need it yet |
 | **Soft deletes** | Tradeoff: simpler restore vs. more complex queries |
 | **RBAC beyond 3 roles** | Would require a permissions table |
