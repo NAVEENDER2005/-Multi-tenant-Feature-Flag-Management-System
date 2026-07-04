@@ -1,0 +1,29 @@
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
+/**
+ * Thin fetch wrapper:
+ *  - Prepends BASE_URL to path
+ *  - Sets Content-Type: application/json
+ *  - Auto-attaches Bearer token if provided
+ *  - Returns parsed JSON; throws on non-OK with the server's error message
+ */
+export async function apiFetch(path, { method = 'GET', body, token } = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  const json = await res.json();
+
+  if (!json.success) {
+    const err = new Error(json.error || `HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+
+  return json.data;
+}

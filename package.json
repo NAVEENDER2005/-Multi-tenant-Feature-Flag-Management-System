@@ -1,0 +1,10 @@
+{
+  "name": "feature-flag-system-root",
+  "version": "1.0.0",
+  "description": "Multi-tenant feature flag system — monorepo root",
+  "scripts": {
+    "dev": "node start-dev.js",
+    "seed": "node server/seed.js",
+    "install:all": "node install-all.js"
+  }
+}
